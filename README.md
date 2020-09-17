@@ -13,7 +13,7 @@ GET: /customer?customerId=?
 POST: /customer
 RequestBody: 
 
-`{ "name" : "Beltrano de Castro", "email" : "beltrano@gmail.com"}`
+{ "name" : "Beltrano de Castro", "email" : "beltrano@gmail.com"}
 
 GET: /order
 Lista os Pedidos criados
@@ -24,12 +24,12 @@ Traz o order de acordo com o id informado
 POST: /order
 RequestBody
 
-`{
+{
     "customerId" : 10,
     "value" : 0.00,
     "items" : []
 
-}`
+}
 
 GET: /order/item
 lista os items de todos os pedidos
