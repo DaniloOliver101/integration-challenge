@@ -1,11 +1,11 @@
 package br.com.integrationchallenge.controller;
 
-import br.com.integrationchallenge.controller.dto.CustomerDto;
 import br.com.integrationchallenge.controller.dto.OrderDto;
-import br.com.integrationchallenge.controller.form.CustomerForm;
+import br.com.integrationchallenge.controller.dto.OrderItemDto;
 import br.com.integrationchallenge.controller.form.OrderForm;
-import br.com.integrationchallenge.model.Customer;
+import br.com.integrationchallenge.controller.form.OrderItemForm;
 import br.com.integrationchallenge.model.Order;
+import br.com.integrationchallenge.model.OrderItem;
 import br.com.integrationchallenge.repository.CustomerRepository;
 import br.com.integrationchallenge.repository.OrderItemRepository;
 import br.com.integrationchallenge.repository.OrderRepository;
@@ -16,12 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/order")
-public class OrderController {
+@RequestMapping("/order/item")
+public class OrderItemController {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
@@ -32,24 +31,23 @@ public class OrderController {
     private CustomerRepository customerRepository;
 
     @GetMapping
-    public List<OrderDto> listOrders(Long orderId) {
-        if (orderId == null) {
-            List<Order> orders = orderRepository.findAll();
-            return OrderDto.convert(orders);
+    public List<OrderItemDto> listItems(Long orderItemId) {
+        if (orderItemId == null) {
+            List<OrderItem> items = orderItemRepository.findAll();
+            return OrderItemDto.convert(items);
         } else {
-            List<Order> orders = orders = orderRepository.findByCustomerId(orderId);
-            return OrderDto.convert(orders);
+            List<OrderItem> items = orderItemRepository.findByOrderItemId(orderItemId);
+            return OrderItemDto.convert(items);
         }
     }
 
     @PostMapping
-    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderForm form, UriComponentsBuilder uriBuilder) {
-        Order order = form.convert(customerRepository);
-        orderRepository.save(order);
-        form.getItems().forEach(item -> {
-            item.convert(orderRepository);
-        });
-        URI uri = uriBuilder.path("/order/{id}").buildAndExpand(order.getId()).toUri();
-        return ResponseEntity.created(uri).body(new OrderDto(order));
+    public ResponseEntity<OrderItemDto> createOrder(@RequestBody OrderItemForm form, UriComponentsBuilder uriBuilder) {
+        OrderItem orderItem = form.convert(orderRepository);
+
+        orderItemRepository.save(orderItem);
+        URI uri = uriBuilder.path("/order/item/{id}").buildAndExpand(orderItem.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(new OrderItemDto(orderItem));
     }
 }
